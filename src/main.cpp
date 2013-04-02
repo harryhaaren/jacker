@@ -61,8 +61,10 @@ public:
     JackPlayer() : Jack::Client("jacker") {
         thread_messages.resize(100);
         
-        enable_sync = false;
-        waiting_for_sync = false;
+        // enable JACK transport sync by default
+        enable_sync = true;
+        waiting_for_sync = true;
+        
         defunct = false;
         midi_inp = new Jack::MIDIPort(
             *this, "control", Jack::MIDIPort::IsInput);
@@ -161,9 +163,13 @@ public:
             return result;
         }
         */
-        return (int)(((double)model->beats_per_minute * pos.frame / (sample_rate * 60.0))+0.5) * 
-            model->frames_per_beat;
-        //return -1;
+        
+        // use JACK transport if present, otherwise internal
+        int bpm = pos.beats_per_minute;
+        if ( !pos.beats_per_minute )
+          bpm = model->frames_per_beat;
+        
+        return (int)((bpm * pos.frame / (sample_rate * 60.0))+0.5) * model->frames_per_beat;
     }
     
     virtual bool on_sync(Jack::TransportState state, const Jack::Position &pos) {
