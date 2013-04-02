@@ -392,7 +392,9 @@ int Measure::get_frame(Model &model) const {
 
 std::string Measure::get_string() const {
     char text[32];
-    sprintf(text, "%i:%i.%i", bar, beat, subframe);
+    // +1 for counting from beat bar 1, not 0.
+    // This lines BBT up with apps like QJackCtl and Ardour
+    sprintf(text, "%i:%i.%i", bar+1, beat+1, subframe);
     return text;
 }
 
