@@ -44,7 +44,7 @@ public:
     
     typename map::iterator add_event(const Event &event) {
         return extract_iterator<typename map::key_type, Event>(
-            insert(typename map::value_type(event.key(),event)));
+            this->insert(typename map::value_type(event.key(),event)));
     }
 };
 
